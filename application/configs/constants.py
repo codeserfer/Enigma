@@ -28,6 +28,8 @@ DATABASES = {
     }
 }
 
+REDIS_LOCATION = 'redis://127.0.0.1:6379/1'
+
 if IS_TEST:
     for db_name in DATABASES:
         DATABASES[db_name] = {
