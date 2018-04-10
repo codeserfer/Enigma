@@ -33,7 +33,7 @@ class EncryptedData(models.Model):
     )
     # Translators: Инициализационный вектор
     init_vector = models.BinaryField(verbose_name=_('initial vector'), null=True, blank=True)
-    # Translation: Ключ из базы данных
+    # Translators: Ключ из базы данных
     db_key = models.TextField(verbose_name=_('code from database'))
 
     @staticmethod

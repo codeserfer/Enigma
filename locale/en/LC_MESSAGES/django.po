@@ -1,0 +1,48 @@
+# Enigma English translations
+# Copyright (C) 2018 Codeserfer
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <admin@codeserfer.com>, 2018.
+
+
+#. Translators: Идентификационный ключ
+#: crypto/models.py:19
+msgid "identify key"
+msgstr "Identify key"
+
+#. Translators: Данные
+#: crypto/models.py:21
+msgid "data"
+msgstr "Data"
+
+#. Translators: Дата и время добавления
+#: crypto/models.py:23
+msgid "date and time of adding"
+msgstr "Date and time of adding"
+
+#. Translators: Дата и время удаления
+#: crypto/models.py:25
+msgid "date and time of deleting"
+msgstr "date and time of deleting"
+
+#. Translators: Количество открытий всего
+#: crypto/models.py:27
+msgid "times of opening total"
+msgstr "Times of opening total"
+
+#. Translators: Количество открытий
+#: crypto/models.py:29
+msgid "times of opening"
+msgstr "Times of opening"
+
+#: crypto/models.py:32
+msgid "user"
+msgstr "User"
+
+#. Translators: Инициализационный вектор
+#: crypto/models.py:35
+msgid "initial vector"
+msgstr "Initial vector"
+
+#: crypto/models.py:37
+msgid "code from database"
+msgstr "Code from database"
