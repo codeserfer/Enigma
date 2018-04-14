@@ -140,6 +140,7 @@ class EncryptedData(models.Model):
         item, url_key = cls.parse_url(url)
 
         if not item.is_available:
+            item.delete()
             raise Http404
 
         encryption_key = cls.get_encryption_key(settings.CODE_KEY, item.db_key[:DB_CODE_LENGTH], url_key)
