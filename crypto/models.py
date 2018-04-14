@@ -1,6 +1,8 @@
 from Crypto.Cipher import AES
 
 from django.db import models
+from django.http import Http404
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.conf import settings
 
@@ -12,6 +14,16 @@ DB_CODE_LENGTH = settings.DB_CODE_LENGTH
 IDENTIFY_KEY_LENGTH = settings.IDENTIFY_KEY_LENGTH
 URL_KEY_LENGTH = settings.URL_KEY_LENGTH
 ENCRYPTION_KEY_LENGTH = 32
+
+
+class EncryptedDataManager(models.Manager):
+    def create(self, *args, **kwargs):
+        create_kwargs = {
+            'text': kwargs.get('text'),
+            'delete_dt': kwargs.get('delete_dt'),
+            'total_times': kwargs.get('total_times'),
+        }
+        return EncryptedData.encrypt(**create_kwargs)
 
 
 class EncryptedData(models.Model):
@@ -35,6 +47,16 @@ class EncryptedData(models.Model):
     init_vector = models.BinaryField(verbose_name=_('initial vector'), null=True, blank=True)
     # Translators: Ключ из базы данных
     db_key = models.TextField(verbose_name=_('code from database'))
+
+    objects = EncryptedDataManager()
+
+    @property
+    def is_available(self):
+        """
+        Checks if object can be retrieved. Checks open times and delete datetime
+        :return: True if object if available
+        """
+        return self.actual_times <= self.total_times and timezone.now() <= self.delete_dt
 
     @staticmethod
     def generate_encryption_data():
@@ -116,6 +138,10 @@ class EncryptedData(models.Model):
     @classmethod
     def decrypt(cls, url):
         item, url_key = cls.parse_url(url)
+
+        if not item.is_available:
+            raise Http404
+
         encryption_key = cls.get_encryption_key(settings.CODE_KEY, item.db_key[:DB_CODE_LENGTH], url_key)
         cipher = AES.new(encryption_key, AES.MODE_CFB, iv=item.init_vector)
         return cipher.decrypt(item.data).decode('utf-8')
