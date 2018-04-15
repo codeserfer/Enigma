@@ -1,3 +1,4 @@
+factory-boy==2.10.0
 Django==2.0.1
 django-split-settings==0.2.5
 django-redis==4.9.0
