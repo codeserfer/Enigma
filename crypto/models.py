@@ -34,11 +34,11 @@ class EncryptedData(models.Model):
     # Translators: Дата и время добавления
     add_dt = models.DateTimeField(verbose_name=_('date and time of adding'), auto_now=True)
     # Translators: Дата и время удаления
-    delete_dt = models.DateTimeField(verbose_name=_('date and time of deleting'), null=True)
+    delete_dt = models.DateTimeField(verbose_name=_('date and time of deleting'), null=True, default=None)
     # Translators: Количество открытий всего
-    total_times = models.IntegerField(verbose_name=_('times of opening total'), null=True)
+    total_times = models.IntegerField(verbose_name=_('times of opening total'), null=True, default=None)
     # Translators: Количество открытий
-    actual_times = models.IntegerField(verbose_name=_('times of opening'), null=True)
+    actual_times = models.IntegerField(verbose_name=_('times of opening'), null=True, default=None)
     # Translators: Пользователь
     user = models.ForeignKey(
         User, verbose_name=_('user'), related_name='encrypted_data', null=True, on_delete=models.SET_NULL
@@ -56,7 +56,10 @@ class EncryptedData(models.Model):
         Checks if object can be retrieved. Checks open times and delete datetime
         :return: True if object if available
         """
-        return self.actual_times <= self.total_times and timezone.now() <= self.delete_dt
+        is_times_valid = self.actual_times <= self.total_times if self.actual_times and self.total_times else True
+        is_delete_dt_valid = timezone.now() <= self.delete_dt if self.delete_dt else True
+
+        return is_times_valid and is_delete_dt_valid
 
     @staticmethod
     def generate_encryption_data():
