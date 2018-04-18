@@ -116,6 +116,14 @@ class EncryptedData(models.Model):
 
     @classmethod
     def encrypt(cls, text, delete_dt=None, total_times=None):
+        if delete_dt and delete_dt < timezone.now():
+            # Translators: Дата и время удаления должны быть в будущем
+            raise ValueError(_('delete datetime must be in future'))
+
+        if total_times and total_times <= 0:
+            # Translators: Общее число открытий должно быть больше нуля
+            raise ValueError(_('times of opening must be greater than zero'))
+
         code_key, db_key, identify_key, url_key = cls.generate_encryption_data()
         key_code_cut, db_code_cut, identify_key_cut, url_key_cut = cls.cut_encryption_data(
             code_key, db_key, identify_key, url_key
@@ -123,10 +131,12 @@ class EncryptedData(models.Model):
         encryption_key = cls.get_encryption_key(key_code_cut, db_code_cut, url_key_cut)
         cipher = AES.new(encryption_key, AES.MODE_CFB)
         data = cipher.encrypt(text.encode('utf8'))
+        actual_times = 0 if total_times is not None else None
 
         item = cls(
             data=data,
             delete_dt=delete_dt,
+            actual_times=actual_times,
             total_times=total_times,
             init_vector=cipher.iv,
             identify_key=identify_key,
@@ -146,6 +156,17 @@ class EncryptedData(models.Model):
             item.delete()
             raise Http404
 
+        if item.actual_times is not None:
+            item.actual_times += 1
+
         encryption_key = cls.get_encryption_key(settings.CODE_KEY, item.db_key[:DB_CODE_LENGTH], url_key)
         cipher = AES.new(encryption_key, AES.MODE_CFB, iv=item.init_vector)
-        return cipher.decrypt(item.data).decode('utf-8')
+        return_value = cipher.decrypt(item.data).decode('utf-8')
+
+        if item.total_times:
+            if item.actual_times == item.total_times:
+                item.delete()
+            else:
+                item.save()
+
+        return return_value
