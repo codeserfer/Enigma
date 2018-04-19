@@ -1,7 +1,6 @@
 from Crypto.Cipher import AES
 
 from django.db import models
-from django.http import Http404
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -14,6 +13,10 @@ DB_CODE_LENGTH = settings.DB_CODE_LENGTH
 IDENTIFY_KEY_LENGTH = settings.IDENTIFY_KEY_LENGTH
 URL_KEY_LENGTH = settings.URL_KEY_LENGTH
 ENCRYPTION_KEY_LENGTH = 32
+
+
+class CanNotEncodeException(Exception):
+    pass
 
 
 class EncryptedDataManager(models.Manager):
@@ -112,7 +115,8 @@ class EncryptedData(models.Model):
     def parse_url(cls, url):
         identify_key = url[URL_KEY_LENGTH:]
         item = cls.objects.get(identify_key=identify_key)
-        return item, url[:URL_KEY_LENGTH]
+        url_key = url[:URL_KEY_LENGTH]
+        return item, url_key
 
     @classmethod
     def encrypt(cls, text, delete_dt=None, total_times=None):
@@ -154,14 +158,19 @@ class EncryptedData(models.Model):
 
         if not item.is_available:
             item.delete()
-            raise Http404
+            raise CanNotEncodeException
 
         if item.actual_times is not None:
             item.actual_times += 1
 
         encryption_key = cls.get_encryption_key(settings.CODE_KEY, item.db_key[:DB_CODE_LENGTH], url_key)
         cipher = AES.new(encryption_key, AES.MODE_CFB, iv=item.init_vector)
-        return_value = cipher.decrypt(item.data).decode('utf-8')
+
+        # if incorrect key cipher returns wrong string. It may cause UnicodeDecodeError
+        try:
+            return_value = cipher.decrypt(item.data).decode('utf-8')
+        except UnicodeDecodeError:
+            raise CanNotEncodeException
 
         if item.total_times:
             if item.actual_times == item.total_times:
