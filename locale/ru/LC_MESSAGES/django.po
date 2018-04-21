@@ -2,46 +2,68 @@
 # Copyright (C) 2018 Codeserfer
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <admin@codeserfer.com>, 2018.
+msgid ""
+msgstr ""
+"Project-Id-Version: Enigma\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-16 21:21+0000\n"
+"PO-Revision-Date: 2018-04-17 00:19+0300\n"
+"Last-Translator: Dmitry Zakharchenko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #. Translators: Идентификационный ключ
-#: crypto/models.py:19
+#: crypto/models.py:31
 msgid "identify key"
 msgstr "Идентификационный ключ"
 
 #. Translators: Данные
-#: crypto/models.py:21
+#: crypto/models.py:33
 msgid "data"
 msgstr "Данные"
 
 #. Translators: Дата и время добавления
-#: crypto/models.py:23
+#: crypto/models.py:35
 msgid "date and time of adding"
 msgstr "Дата и время добавления"
 
 #. Translators: Дата и время удаления
-#: crypto/models.py:25
+#: crypto/models.py:37
 msgid "date and time of deleting"
 msgstr "Дата и время удаления"
 
 #. Translators: Количество открытий всего
-#: crypto/models.py:27
+#: crypto/models.py:39
 msgid "times of opening total"
 msgstr "Количество открытий всего"
 
 #. Translators: Количество открытий
-#: crypto/models.py:29
+#: crypto/models.py:41
 msgid "times of opening"
 msgstr "Количество открытий"
 
-#: crypto/models.py:32
+#: crypto/models.py:44
 msgid "user"
 msgstr "Пользователь"
 
 #. Translators: Инициализационный вектор
-#: crypto/models.py:35
+#: crypto/models.py:47
 msgid "initial vector"
 msgstr "Инициализационный вектор"
 
-#: crypto/models.py:37
+#. Translators: Ключ из базы данных
+#: crypto/models.py:49
 msgid "code from database"
 msgstr "Ключ из базы данных"
+
+#. Translators: Дата и время удаления должны быть в будущем
+#: crypto/models.py:121
+msgid "delete datetime must be in future"
+msgstr "Дата и время удаления должны быть в будущем"
+
+#. Translators: Общее число открытий должно быть больше нуля
+#: crypto/models.py:125
+msgid "times of opening must be greater than zero"
+msgstr "Общее число открытий должно быть больше нуля"
